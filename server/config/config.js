@@ -13,7 +13,7 @@ if( process.env.NODE_ENV === 'dev') {
     
 }else {
 
-    urlDB = 'mongodb+srv://josu3:4S7PL4cF2iDGqrv@cluster0.v2evo.mongodb.net/cafe';
+    urlDB = process.env.MONGO_URL;
     
 }
 
