@@ -2,12 +2,17 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
 const Usuario = require('../models/usuario-model');
+const { verifica, verificaAdminRole } = require('../middlewares/autenticacion');
 const app = express();
 
 app.use( express.urlencoded({ extended: false }) )
 
-app.get('/usuario', (req, res) => {
+app.get('/usuario', verifica, (req, res) => {
 
+    return res.json({
+        usuario: req.usuario
+    });
+    
     let desde = req.query.desde || 0;
     desde = Number(desde);
     let limite = req.query.limite || 5;
@@ -36,7 +41,7 @@ app.get('/usuario', (req, res) => {
     
 })
 
-app.post('/usuario', (req, res) => {
+app.post('/usuario', [verifica, verificaAdminRole], (req, res) => {
 
     let body = req.body;
     
@@ -67,7 +72,7 @@ app.post('/usuario', (req, res) => {
     
 })
 
-app.put('/usuario/:id', (req, res) => {
+app.put('/usuario/:id', verifica, (req, res) => {
 
     let id = req.params.id;
     let body = _.pick( req.body, ['nombre', 'email', 'img', 'estado', 'role'] );
@@ -77,7 +82,10 @@ app.put('/usuario/:id', (req, res) => {
         if( err ) {
             return res.status(400).json({
                 ok: false,
-                message: err
+                err: {
+                    message: `Error en el id: ${ id }`,
+                    err
+                }
             })
         }
 
@@ -90,7 +98,7 @@ app.put('/usuario/:id', (req, res) => {
     
 })
 
-app.delete('/usuario/:id', (req, res) => {
+app.delete('/usuario/:id', verifica, (req, res) => {
 
     let id = req.params.id;
     let cambiarEstado = {

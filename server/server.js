@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const app = express(); 
 
 app.use( express.urlencoded({ extended: false }) );
-app.use( require('./routes/usuario-routes') );
+app.use( require('./routes/index') );
 
 
 
